@@ -124,7 +124,7 @@ def sla(guidestrand: str) -> list:
             fp_2 = fp[:flap_n] + gs[:(fp_n - 3)]
             fp_3 = fp[:flap_n] + gs[:(fp_n - 1)]
 
-        return fp.toseq(), fp_n, fp_2, fp_3, homo_dg, het_dg
+        return str(fp), fp_n, fp_2, fp_3, homo_dg, het_dg
 
     def Probe(fp, fp_n):
         # global gs
@@ -147,7 +147,7 @@ def sla(guidestrand: str) -> list:
             p_b = sl[-(i + 2)] + sl[-(i + 1)] + p_b
         else:
             p_b = ""
-        return p.toseq(), p_b
+        return str(p), p_b
 
     rt, rt_n, rt_b, rt_c = RTPrimer()
     fp, fp_n, fp_b, fp_c, homo_dg, het_dg = ForwardPrimer()
