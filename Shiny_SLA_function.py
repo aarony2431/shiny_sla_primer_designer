@@ -2,7 +2,6 @@
 # Samuel Beppler
 # 23 March 2020
 # sla.py v1.1
-# import argparse
 import random
 import Bio.Seq
 from Bio.Seq import Seq
@@ -11,7 +10,7 @@ from Bio.SeqUtils import MeltingTemp as TM
 from primer3 import bindings as primer3
 
 
-def sla(guidestrand: str) -> list:
+def sla(guidestrand: str, flap_n_base=6) -> list:
     #########################################################################
     #########################################################################
     # P = "123456"
@@ -19,9 +18,8 @@ def sla(guidestrand: str) -> list:
     STEMLOOP = "GTCGTATCCAGTGCAGGGTCCGAGGTATTCGCACTGGATACGAC"
     # ^ TODO Kramer 2011, validate sequence
     UR = "CCAGTGCAGGGTCCGAGGTA"  # TODO UR-20 Kramer 2011
-    FLAP = "AATAAATCATAA"
-    # ALT_FLAP = "CGGCGGC"    # The alt flap is good for increasing GC content and avoidng G-tetrads
-    FLAP_N = 6
+    AT_FLAP = "AATAAATCATAA"
+    ALT_FLAP = "CGGCGGC"    # The alt flap is good for increasing GC content and avoidng G-tetrads
 
     gs = Seq(guidestrand).back_transcribe()
     # p = Seq(P)
@@ -29,35 +27,25 @@ def sla(guidestrand: str) -> list:
 
     rando = False
 
-    # if (args.flap): FLAP = args.flap
-    # if (args.alt_flap):
-    #     FLAP = ALT_FLAP
-    #     FLAP_N = 7
-
     def RTPrimer():
-        # if args.rt:
-        #     rt_n = args.rt
-        # else:
-        #     rt_n = 6  # from Kramer (2011)
         rt_n = 6  # from Kramer (2011)
         rtp = sl + gs.reverse_complement()[:rt_n]
         rtp_b = sl + gs.reverse_complement()[:rt_n + 1]
         rtp_c = sl + gs.reverse_complement()[:rt_n + 2]
         return rtp, rt_n, rtp_b, rtp_c
 
-    def ForwardPrimer():
-        # global rando
+    def ForwardPrimer(alt_flap=False):
+        global rando
         # fp_14 = ""
         # fp_16 = ""
         fp_n = 12  # initial Forward Primer-cDNA overlap length = 12
-        fp = Seq("")
-        ldr = Seq(FLAP)
+        ldr = Seq(AT_FLAP if not alt_flap else ALT_FLAP)
         score = 0
-        flap_n = FLAP_N
+        flap_n = flap_n_base if not alt_flap else len(ALT_FLAP)
         fp = ldr[-flap_n:] + gs[:fp_n]
         fp = mSeq(str(fp))
-        # if (not args.alt_flap) and (TM.Tm_NN(fp, dnac1=250, dnac2=250) < 59):
-        if TM.Tm_NN(fp, dnac1=250, dnac2=250) < 59:
+        if not alt_flap and (TM.Tm_NN(fp, dnac1=250, dnac2=250) < 59):
+        # if TM.Tm_NN(fp, dnac1=250, dnac2=250) < 59:
             # Tm too low, extend and substitute GCs into 5' flap
             flap_n += 1
             fp.insert(0, ldr[-flap_n])
@@ -70,7 +58,7 @@ def sla(guidestrand: str) -> list:
                 fp.insert(i, nt)
                 i -= 1
         # Extend FP to cover more of cDNA/GS sequence
-        while TM.Tm_NN(fp, dnac1=250, dnac2=250) < 59 and fp_n < 17:
+        while TM.Tm_NN(fp, dnac1=250, dnac2=250) < 59 and fp_n < 17 and not alt_flap:
             fp_n += 1
             fp = fp[:flap_n] + gs[:fp_n]
         if TM.Tm_NN(fp, dnac1=250, dnac2=250) < 59:
@@ -124,10 +112,13 @@ def sla(guidestrand: str) -> list:
             fp_2 = fp[:flap_n] + gs[:(fp_n - 3)]
             fp_3 = fp[:flap_n] + gs[:(fp_n - 1)]
 
-        return str(fp), fp_n, fp_2, fp_3, homo_dg, het_dg
+        # Choosing primers without G-tetrads
+        if fp[0:flap_n].find('GGG') != -1:
+            return ForwardPrimer(alt_flap=True)
+        else:
+            return str(fp), fp_n, fp_2, fp_3, homo_dg, het_dg
 
     def Probe(fp, fp_n):
-        # global gs
         # if args.probe:
         #     p_n = args.probe
         # else:
@@ -176,7 +167,7 @@ def sla(guidestrand: str) -> list:
     output.append(f'RT-{rt_n}\t{rt}\t{TM.Tm_NN(rt):.2f}')
     output.append(f'RT-{rt_n + 1}\t{rt_b}\t{TM.Tm_NN(rt_b):.2f}')
     output.append(f'RT-{rt_n + 2}\t{rt_c}\t{TM.Tm_NN(rt_c):.2f}')
-    output.append(f'F-{fp_n}\t{fp}\t{TM.Tm_NN(fp)}')
+    output.append(f'F-{fp_n}\t{fp}\t{TM.Tm_NN(fp):.2f}')
     output.append(f'F-{len(fp_b) - FLAP_N}\t{fp_b}\t{TM.Tm_NN(fp_b):.2f}')
     output.append(f'F-{len(fp_c) - FLAP_N}\t{fp_c}\t{TM.Tm_NN(fp_c):.2f}')
     try:
@@ -232,4 +223,3 @@ def cross_check_sla(guidestrand: str, times=50) -> list:
             maxProbeLength = probe_length
             best_sla = sla_out
     return best_sla
-
