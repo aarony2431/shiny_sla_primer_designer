@@ -10,7 +10,7 @@ from Bio.SeqUtils import MeltingTemp as TM
 from primer3 import bindings as primer3
 
 
-def sla(guidestrand: str, rt=6) -> list:
+def sla(guidestrand: str, flap_n_base=6) -> list:
     #########################################################################
     #########################################################################
     # P = "123456"
@@ -41,7 +41,7 @@ def sla(guidestrand: str, rt=6) -> list:
         fp_n = 12  # initial Forward Primer-cDNA overlap length = 12
         ldr = Seq(AT_FLAP if not alt_flap else ALT_FLAP)
         score = 0
-        flap_n = rt if not alt_flap else len(ALT_FLAP)
+        flap_n = flap_n_base if not alt_flap else len(ALT_FLAP)
         fp = ldr[-flap_n:] + gs[:fp_n]
         fp = mSeq(str(fp))
         # if (not args.alt_flap) and (TM.Tm_NN(fp, dnac1=250, dnac2=250) < 59):
@@ -113,13 +113,12 @@ def sla(guidestrand: str, rt=6) -> list:
             fp_3 = fp[:flap_n] + gs[:(fp_n - 1)]
 
         # Choosing primers without G-tetrads
-        if str(fp[0:flap_n]).find('GGGG') != -1:
+        if fp[0:flap_n].find('GGG') != -1:
             return ForwardPrimer(alt_flap=True)
         else:
             return str(fp), fp_n, fp_2, fp_3, homo_dg, het_dg
 
     def Probe(fp, fp_n):
-        global gs
         # if args.probe:
         #     p_n = args.probe
         # else:
@@ -224,4 +223,3 @@ def cross_check_sla(guidestrand: str, times=50) -> list:
             maxProbeLength = probe_length
             best_sla = sla_out
     return best_sla
-
