@@ -114,7 +114,7 @@ def sla(guidestrand: str, rt=6) -> list:
 
         # Choosing primers without G-tetrads
         if str(fp[0:flap_n]).find('GGGG') != -1:
-            return ForwardPrimer()
+            return ForwardPrimer(alt_flap=True)
         else:
             return str(fp), fp_n, fp_2, fp_3, homo_dg, het_dg
 
