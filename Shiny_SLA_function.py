@@ -44,8 +44,8 @@ def sla(guidestrand: str, flap_n_base=6) -> list:
         flap_n = flap_n_base if not alt_flap else len(ALT_FLAP)
         fp = ldr[-flap_n:] + gs[:fp_n]
         fp = mSeq(str(fp))
-        # if (not args.alt_flap) and (TM.Tm_NN(fp, dnac1=250, dnac2=250) < 59):
-        if TM.Tm_NN(fp, dnac1=250, dnac2=250) < 59:
+        if not alt_flap and (TM.Tm_NN(fp, dnac1=250, dnac2=250) < 59):
+        # if TM.Tm_NN(fp, dnac1=250, dnac2=250) < 59:
             # Tm too low, extend and substitute GCs into 5' flap
             flap_n += 1
             fp.insert(0, ldr[-flap_n])
@@ -58,7 +58,7 @@ def sla(guidestrand: str, flap_n_base=6) -> list:
                 fp.insert(i, nt)
                 i -= 1
         # Extend FP to cover more of cDNA/GS sequence
-        while TM.Tm_NN(fp, dnac1=250, dnac2=250) < 59 and fp_n < 17:
+        while TM.Tm_NN(fp, dnac1=250, dnac2=250) < 59 and fp_n < 17 and not alt_flap:
             fp_n += 1
             fp = fp[:flap_n] + gs[:fp_n]
         if TM.Tm_NN(fp, dnac1=250, dnac2=250) < 59:
