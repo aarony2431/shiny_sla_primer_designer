@@ -167,7 +167,7 @@ def sla(guidestrand: str, flap_n_base=6) -> list:
     output.append(f'RT-{rt_n}\t{rt}\t{TM.Tm_NN(rt):.2f}')
     output.append(f'RT-{rt_n + 1}\t{rt_b}\t{TM.Tm_NN(rt_b):.2f}')
     output.append(f'RT-{rt_n + 2}\t{rt_c}\t{TM.Tm_NN(rt_c):.2f}')
-    output.append(f'F-{fp_n}\t{fp}\t{TM.Tm_NN(fp)}')
+    output.append(f'F-{fp_n}\t{fp}\t{TM.Tm_NN(fp):.2f}')
     output.append(f'F-{len(fp_b) - FLAP_N}\t{fp_b}\t{TM.Tm_NN(fp_b):.2f}')
     output.append(f'F-{len(fp_c) - FLAP_N}\t{fp_c}\t{TM.Tm_NN(fp_c):.2f}')
     try:
