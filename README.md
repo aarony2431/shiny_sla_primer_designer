@@ -1,5 +1,5 @@
 # shiny_sla_primer_designer
-The **shiny_sla_primer_designer** is a [ShinyApp](https://shiny.rstudio.com/) hosted for free on https://shinyapps.io used to design oligonucleotide primers for stem-loop assay PCR (SLA), as previously described by [Kramer et al. 2011](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3152947/).
+The **shiny_sla_primer_designer** is a [ShinyApp](https://shiny.rstudio.com/) hosted for free on https://shinyapps.io/ used to design oligonucleotide primers for stem-loop assay PCR (SLA), as previously described by [Kramer et al. 2011](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3152947/).
 
 ### Usage
 The application is located at https://aaronyu.shinyapps.io/shiny-sla-primer-designer/. The app may require several minutes to load.
@@ -19,7 +19,7 @@ When the user loads the application, a temporary virtual version of Python is cr
 ## Stem-Loop Assay qPCR (SLA)
 
 ## Contributions
-This tool was originally developed in Python by Sam Beppler (2020), after which it was edited and transferred to https://shinyapps.io as an online tool by Aaron Yu (2022).
+This tool was originally developed in Python by Sam Beppler (2020), after which it was edited and transferred to https://shinyapps.io/ as an online tool by Aaron Yu (2022).
 
 The Python code utilizes the C-based oligo tool package [Primer3](https://pypi.org/project/primer3-py/).
 
