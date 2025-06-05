@@ -73,11 +73,11 @@ def sla(guidestrand: str, flap_n_base=6) -> list:
                 # Flap specified by user, just trim
                 fp.pop(0)
                 flap_n -= 1
-            if TM.Tm_NN(fp, dnac1=250, dnac2=250) > 61:
-                print("\t *****")
-                print("WARNING! High forward primer Tm. Use default/AT rich flap.")
-                print("Default 5' Flap: AATAAATCATAA")
-                print("\t *****")
+        if TM.Tm_NN(fp, dnac1=250, dnac2=250) > 61:
+            print("\t *****")
+            print("WARNING! High forward primer Tm. Use default/AT rich flap.")
+            print("Default 5' Flap: AATAAATCATAA")
+            print("\t *****")
         # Extend leader sequence if within bound
         if ((flap_n < 7)
                 and (TM.Tm_NN(Seq(ldr[-flap_n] + str(fp)), dnac1=250, dnac2=250) < 61)):
