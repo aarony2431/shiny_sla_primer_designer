@@ -5,3 +5,5 @@
 .Ruserdata
 python35_env/
 rsconnect/
+__pycache__
+.Rproj
