@@ -10,7 +10,7 @@ virtualenv_dir = Sys.getenv('VIRTUALENV_NAME')
 python_path = Sys.getenv('PYTHON_PATH')
 
 # Define any Python packages needed for the app here:
-PYTHON_DEPENDENCIES = c('pip', 'biopython', 'Cython', 'primer3-py==0.6.1')
+PYTHON_DEPENDENCIES = c('pip', 'biopython', 'Cython', 'primer3-py')
 
 # Create virtual env and install dependencies
 reticulate::virtualenv_create(envname = virtualenv_dir, python = python_path)
@@ -96,7 +96,9 @@ server <- function(input, output) {
   # Add reactive event to action button
   primers <- eventReactive(input$getPrimers, {
     in.in <- input$GS
-    sequences <- str_split(in.in, pattern = '(\\n|\\s)') %>% unlist(.)
+    print('lalalala')
+    print(in.in)
+    sequences <- str_split(in.in, pattern = '(\\n|\\s|\\t|,)') %>% unlist(.)
     sequences.trimmed <- sequences[sequences != '']
     
     output$inputText <- renderText({
